@@ -56,17 +56,12 @@ function App() {
 
   useEffect(() => {
     setinputval(transcript);
-
-    
     clearTimeout(debounceTimerRef.current);
-
-
     debounceTimerRef.current = setTimeout(() => {
       fetchdata();
     }, 3500);
 
     return () => {
-  
       clearTimeout(debounceTimerRef.current);
     };
   }, [transcript, fetchdata]);
