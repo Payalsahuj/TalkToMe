@@ -3,28 +3,34 @@ import axios from 'axios';
 import { useEffect, useRef, useState, useCallback } from 'react'; // Import useCallback
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import startimg from "./image/loadprop.png"
+
 function App() {
-  const startListening = () => SpeechRecognition.startListening({ continuous: true, language: 'eng-IN' });
-  const [start,setstart]=useState(false)
+  const startListening = () => SpeechRecognition.startListening({ continuous: true });
+  const [start, setstart] = useState(false);
   const { transcript, browserSupportsSpeechRecognition } = useSpeechRecognition();
   const [inputval, setinputval] = useState(transcript || '');
   const [speak, setspeak] = useState('');
-  const [voices, setvoices] = useState([]);
-  const [selectedVoice, setSelectedVoice] = useState(4); // Initialize with the first voice
-
+  
+  // Use the system's default voice
+  const defaultVoice = window.speechSynthesis.getVoices().find(voice => voice.default);
+  
   let speech = new SpeechSynthesisUtterance();
 
   useEffect(() => {
     window.speechSynthesis.onvoiceschanged = () => {
-      setvoices(window.speechSynthesis.getVoices());
+      // Use the system's default voice when voices change
+      const defaultVoice = window.speechSynthesis.getVoices().find(voice => voice.default);
+      speech.voice = defaultVoice;
+      
     };
   }, []);
 
   useEffect(() => {
     speech.text = speak;
-    speech.voice = voices[selectedVoice]; // Update the voice when selectedVoice changes
+    // Update the voice when selectedVoice changes
+    speech.voice = defaultVoice;
     window.speechSynthesis.speak(speech);
-  }, [speak, voices, selectedVoice]);
+  }, [speak, defaultVoice]);
 
   const debounceTimerRef = useRef(null);
 
@@ -33,7 +39,7 @@ function App() {
       console.log('Need to communicate');
     } else {
       SpeechRecognition.stopListening();
-      setstart(false)
+      setstart(false);
       let data = {
         value: inputval,
       };
@@ -71,7 +77,7 @@ function App() {
     startListening();
   }
 
-  function stoplist(){
+  function stoplist() {
     setstart(false)
     SpeechRecognition.stopListening()
   }
@@ -81,31 +87,21 @@ function App() {
   }
 
   return (
-    <div style={{backgroundColor:'rgba(21,25,31,255)',height:'100vh',padding:'2%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}} className="App">
-      <h1 style={{color:'white',fontFamily:'monospace',fontSize:'35px'}}><b>𝕿𝖆𝖑𝖐 𝖙𝖔 𝖒𝖊</b></h1>
-      {start?<img className='imageone'  src="https://cdn.dribbble.com/users/121337/screenshots/1309485/loading.gif"   alt=""/>:<img  className='imagetwo' src={startimg}   alt=""/>}
-      
-      <input style={{visibility:'hidden'}} value={inputval} onChange={(e) => setinputval(e.target.value)}></input>
+    <div style={{ backgroundColor: 'rgba(21,25,31,255)', height: '100vh', padding: '2%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} className="App">
+      <h1 style={{ color: 'white', fontFamily: 'monospace', fontSize: '35px' }}><b>𝕿𝖆𝖑𝖐 𝖙𝖔 𝖒𝖊</b></h1>
+      {start ? <img className='imageone' src="https://cdn.dribbble.com/users/121337/screenshots/1309485/loading.gif" alt="" /> : <img className='imagetwo' src={startimg} alt="" />}
 
-      <div  className="btn-style">
-        <button className='button' style={{color:'white',backgroundColor:'grey',fontFamily:'monospace',width:'150px',height:'40px'}} onClick={sayany}><b>Start Conversation</b></button>
-        <button className='button' style={{color:'white',backgroundColor:'grey',fontFamily:'monospace',width:'150px',height:'40px'}} onClick={stoplist}><b>Stop Conversation</b></button>
-        </div>
-        <div style={{position:'absolute',top:'1%',left:'1%'}}>
-        <select className='button'  style={{color:'white',backgroundColor:'grey',width:'300px',height:'35px',fontFamily:'monospace',fontWeight:'700'}} value={selectedVoice} onChange={(e) => setSelectedVoice(e.target.value)}>
-          {voices.map((voi, i) => (
-            <option key={i} value={i}>
-              {voi.name}
-            </option>
-          ))}
-        </select>
+      <input style={{ visibility: 'hidden' }} value={inputval} onChange={(e) => setinputval(e.target.value)}></input>
+
+      <div className="btn-style">
+        <button className='button' style={{ color: 'white', backgroundColor: 'grey', fontFamily: 'monospace', width: '150px', height: '40px' }} onClick={sayany}><b>Start Conversation</b></button>
+        <button className='button' style={{ color: 'white', backgroundColor: 'grey', fontFamily: 'monospace', width: '150px', height: '40px' }} onClick={stoplist}><b>Stop Conversation</b></button>
       </div>
     </div>
   );
 }
 
 export default App;
-
 
 
 // https://media3.giphy.com/media/QzdJer4CUPGheUFa1n/giphy.gif
