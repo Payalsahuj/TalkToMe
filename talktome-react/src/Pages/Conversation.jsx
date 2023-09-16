@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useEffect, useRef, useState, useCallback } from 'react'; // Import useCallback
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import startimg from "../image/loadprop.png"
+import { useNavigate } from 'react-router-dom';
 
 function Conversation() {
   const startListening = () => SpeechRecognition.startListening({ continuous: true });
@@ -10,8 +11,10 @@ function Conversation() {
   const [isSpeaking, setIsSpeaking] = useState(false); 
   const [isUserClicked, setIsUserClicked] = useState(false); 
   const { transcript, browserSupportsSpeechRecognition } = useSpeechRecognition();
-  const [inputval, setinputval] = useState(transcript || '');
+  const [inputval, setinputval] = useState( '');
   const [speak, setspeak] = useState('');
+  const navigate=useNavigate()
+  
 
   const defaultVoice = window.speechSynthesis.getVoices().find(voice => voice.default);
 
@@ -36,10 +39,13 @@ function Conversation() {
     speech.onend = () => {
       setIsSpeaking(false);
       if (isUserClicked) {
-        startListening();
-        setstart(true);
+       
+          startListening();
+          setstart(true);
+        
       }
     }
+    
 
     window.speechSynthesis.speak(speech);
   }, [speak, defaultVoice, isUserClicked]);
@@ -83,15 +89,16 @@ function Conversation() {
     setIsUserClicked(true);
     startListening();
   }
-
   function stoplist() {
+    window.speechSynthesis.cancel(); // Cancel speech synthesis
     setstart(false);
     setIsUserClicked(false);
     setinputval('');
-    setspeak('');
+    setspeak(''); // Clear the speak state to prevent the last response from speaking again
     SpeechRecognition.stopListening();
-    window.speechSynthesis.cancel(); // Cancel speech synthesis
+    navigate("/thank")
   }
+  
   
 
   if (!browserSupportsSpeechRecognition) {
