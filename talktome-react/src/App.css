@@ -1,0 +1,52 @@
+.App {
+  text-align: center;
+}
+
+
+
+
+.button:hover{
+cursor: pointer;
+}
+
+.imageone{
+  width: 50%;
+}
+.imagetwo{
+  width: 44%;
+}
+
+.btn-style{
+  display:flex;
+  flex-direction:row;
+  position:relative;
+  top:-10%;
+}
+@media screen and (max-width: 1400px) and (min-width: 700px) {
+  .imageone{
+    width: 60%;
+  }
+  .imagetwo{
+    width: 64%;
+  }
+  .btn-style{
+    display:flex;
+    flex-direction:row;
+    position:relative;
+    top:-5%;
+  }
+}
+@media screen and (max-width: 700px){
+  .imageone{
+    width: 80%;
+  }
+  .imagetwo{
+    width: 84%;
+  }
+  .btn-style{
+    display:flex;
+    flex-direction:row;
+    position:relative;
+    top:0%;
+  }
+}
