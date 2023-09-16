@@ -7,21 +7,20 @@ import startimg from "./image/loadprop.png"
 function App() {
   const startListening = () => SpeechRecognition.startListening({ continuous: true });
   const [start, setstart] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false); 
+  const [isUserClicked, setIsUserClicked] = useState(false); 
   const { transcript, browserSupportsSpeechRecognition } = useSpeechRecognition();
   const [inputval, setinputval] = useState(transcript || '');
   const [speak, setspeak] = useState('');
-  
 
   const defaultVoice = window.speechSynthesis.getVoices().find(voice => voice.default);
-  
+
   let speech = new SpeechSynthesisUtterance();
 
   useEffect(() => {
     window.speechSynthesis.onvoiceschanged = () => {
-  
       const defaultVoice = window.speechSynthesis.getVoices().find(voice => voice.default);
       speech.voice = defaultVoice;
-      
     };
   }, []);
 
@@ -29,8 +28,21 @@ function App() {
     speech.text = speak;
 
     speech.voice = defaultVoice;
+
+    speech.onstart = () => {
+      setIsSpeaking(true);
+    }
+      
+    speech.onend = () => {
+      setIsSpeaking(false);
+      if (isUserClicked) {
+        startListening();
+        setstart(true);
+      }
+    }
+
     window.speechSynthesis.speak(speech);
-  }, [speak, defaultVoice]);
+  }, [speak, defaultVoice, isUserClicked]);
 
   const debounceTimerRef = useRef(null);
 
@@ -48,7 +60,6 @@ function App() {
         .then((res) => {
           console.log(res.data);
           setspeak(res.data);
-         
         })
         .catch((err) => console.log(err));
     }
@@ -67,15 +78,21 @@ function App() {
   }, [transcript, fetchdata]);
 
   function sayany() {
-    setstart(true)
+    setstart(true);
     setinputval('');
+    setIsUserClicked(true);
     startListening();
   }
 
   function stoplist() {
-    setstart(false)
-    SpeechRecognition.stopListening()
+    setstart(false);
+    setIsUserClicked(false);
+    setinputval('');
+    setspeak('');
+    SpeechRecognition.stopListening();
+    window.speechSynthesis.cancel(); // Cancel speech synthesis
   }
+  
 
   if (!browserSupportsSpeechRecognition) {
     return null;
@@ -89,7 +106,7 @@ function App() {
       <input style={{ visibility: 'hidden' }} value={inputval} onChange={(e) => setinputval(e.target.value)}></input>
 
       <div className="btn-style">
-        <button className='button' style={{ color: 'white', backgroundColor: 'grey', fontFamily: 'monospace', width: '150px', height: '40px' }} onClick={sayany}><b>Start Conversation</b></button>
+        <button className='button' style={{ color: 'white', backgroundColor: 'grey', fontFamily: 'monospace', width: '150px', height: '40px' }} onClick={sayany} disabled={isSpeaking}><b>Start Conversation</b></button>
         <button className='button' style={{ color: 'white', backgroundColor: 'grey', fontFamily: 'monospace', width: '150px', height: '40px' }} onClick={stoplist}><b>Stop Conversation</b></button>
       </div>
     </div>
@@ -97,6 +114,8 @@ function App() {
 }
 
 export default App;
+
+
 
 
 // https://media3.giphy.com/media/QzdJer4CUPGheUFa1n/giphy.gif
