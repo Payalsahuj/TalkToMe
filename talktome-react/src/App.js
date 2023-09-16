@@ -38,7 +38,7 @@ function App() {
         value: inputval,
       };
       axios
-        .post('http://localhost:2500/talktome', data)
+        .post('https://talktome-ujhx.onrender.com/talktome', data)
         .then((res) => {
           console.log(res.data);
           setspeak(res.data);
