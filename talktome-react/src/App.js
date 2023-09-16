@@ -11,14 +11,14 @@ function App() {
   const [inputval, setinputval] = useState(transcript || '');
   const [speak, setspeak] = useState('');
   
-  // Use the system's default voice
+
   const defaultVoice = window.speechSynthesis.getVoices().find(voice => voice.default);
   
   let speech = new SpeechSynthesisUtterance();
 
   useEffect(() => {
     window.speechSynthesis.onvoiceschanged = () => {
-      // Use the system's default voice when voices change
+  
       const defaultVoice = window.speechSynthesis.getVoices().find(voice => voice.default);
       speech.voice = defaultVoice;
       
@@ -27,7 +27,7 @@ function App() {
 
   useEffect(() => {
     speech.text = speak;
-    // Update the voice when selectedVoice changes
+
     speech.voice = defaultVoice;
     window.speechSynthesis.speak(speech);
   }, [speak, defaultVoice]);
@@ -48,7 +48,7 @@ function App() {
         .then((res) => {
           console.log(res.data);
           setspeak(res.data);
-          // handlespeak(res.data); // No longer needed here
+         
         })
         .catch((err) => console.log(err));
     }
@@ -57,16 +57,16 @@ function App() {
   useEffect(() => {
     setinputval(transcript);
 
-    // Clear the previous debounce timer
+    
     clearTimeout(debounceTimerRef.current);
 
-    // Set a new debounce timer to execute fetchdata after 7 seconds of no changes
+
     debounceTimerRef.current = setTimeout(() => {
-      fetchdata(); // Use the fetchdata function here
+      fetchdata();
     }, 3500);
 
     return () => {
-      // Cleanup: clear the debounce timer on component unmount
+  
       clearTimeout(debounceTimerRef.current);
     };
   }, [transcript, fetchdata]);
