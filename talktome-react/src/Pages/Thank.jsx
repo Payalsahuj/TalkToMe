@@ -11,7 +11,7 @@ export const Thankcompo=()=>{
         },4000)
        
     },[])
-    return (<div style={{height:'100vh',backgroundColor:'rgba(21,25,31,255)',display:'flex',justifyContent:'center',alignItems:'center',color:'white'}}>
+    return (<div style={{height:'100vh',backgroundColor:'rgba(21,25,31,255)',display:'flex',justifyContent:'center',alignItems:'center',color:'white',padding:'1%'}}>
         <h2>Thanks for Conversation Hope you Find it Effective</h2>
 
     </div>)
