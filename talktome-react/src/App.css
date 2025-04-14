@@ -5,9 +5,9 @@
 .animated-title {
   color: white;
   font-family: monospace;
-  font-size: 45px;
+  font-size: 40px;
   margin-bottom: 30px;
-  animation: zoomInOut 2s ease-in-out forwards;
+
   text-shadow: 0 0 8px #00ffe0;
 }
 
@@ -109,7 +109,7 @@
   }
   .btn-style {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     position: relative;
     top: 0%;
   }
